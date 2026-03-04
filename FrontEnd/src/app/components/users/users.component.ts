@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 export interface User {
   id: string;
@@ -13,16 +15,19 @@ export interface User {
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [MatTableModule,MatButtonModule],
+  imports: [MatTableModule, MatButtonModule, MatDialogModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
-export class UsersComponent implements OnInit{
+export class UsersComponent implements OnInit {
+  constructor(
+    private apiService: ApiService,
+    private dialog: MatDialog
+  ) {}
 
-  constructor(private apiService: ApiService) { }
+  displayedColumns: string[] = ['nr', 'name', 'email', 'actions'];
+  dataSource = new MatTableDataSource<User>([]);
 
-    displayedColumns: string[] = ['nr','name', 'email','actions'];
-    dataSource = new MatTableDataSource<User>([]);
   ngOnInit() {
     this.apiService.selectAll('users').subscribe(data => {
       this.dataSource.data = data as User[];
@@ -34,6 +39,20 @@ export class UsersComponent implements OnInit{
   }
 
   deleteUser(user: User) {
-    // Implement delete user functionality
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: {
+        title: 'Confirm Delete',
+        message: `Are you sure you want to delete "${user.name}"?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.apiService.delete('users', user.id).subscribe(() => {
+          this.dataSource.data = this.dataSource.data.filter(u => u.id !== user.id);
+        });
+      }
+    });
   }
 }

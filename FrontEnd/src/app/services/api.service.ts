@@ -13,4 +13,8 @@ export class ApiService {
   selectAll(table: string) {
     return this.http.get(`${this.apiUrl}/${table}`);
   }
+
+  delete(table: string, id: string) {
+    return this.http.delete(`${this.apiUrl}/${table}/${id}`);
+  }
 }
