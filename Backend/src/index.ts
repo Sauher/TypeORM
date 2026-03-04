@@ -1,12 +1,15 @@
 import 'reflect-metadata';
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import { AppDataSource } from './data-source';
 
 dotenv.config();
 const port = process.env.PORT || 3000;
 const app = express();
 
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 //Routes
