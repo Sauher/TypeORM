@@ -4,6 +4,7 @@ import { ApiService } from '../../services/api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface User {
   id: string;
@@ -22,7 +23,8 @@ export interface User {
 export class UsersComponent implements OnInit {
   constructor(
     private apiService: ApiService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private _snackBar: MatSnackBar
   ) {}
 
   displayedColumns: string[] = ['nr', 'name', 'email', 'actions'];
@@ -51,6 +53,9 @@ export class UsersComponent implements OnInit {
       if (confirmed) {
         this.apiService.delete('users', user.id).subscribe(() => {
           this.dataSource.data = this.dataSource.data.filter(u => u.id !== user.id);
+          this._snackBar.open(`User "${user.name}" deleted successfully`, 'Close', {
+            duration: 3000
+          });
         });
       }
     });
