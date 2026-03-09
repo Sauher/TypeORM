@@ -16,11 +16,15 @@ export class TaskService {
     }
 
     async listTasks() {
-        return this.taskRepository.find();
+        return this.taskRepository.find({ relations: { user: true } });
     }
 
     async getTaskById(id: string) {
-        return this.taskRepository.findOneBy({ id });
+        return this.taskRepository.findOne({ 
+            where: { id },
+            relations: { user: true }
+        });
+
     }
 
     async updateTask(id: string, taskData: Partial<Task>) {
@@ -33,6 +37,6 @@ export class TaskService {
     }
 
     async listTasksByUserId(userId: string) {
-        return this.taskRepository.findBy({ user: { id: userId } });
+        return this.taskRepository.find({ where: { user: { id: userId } }, relations: { user: true } });
     }
 }

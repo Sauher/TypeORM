@@ -17,4 +17,16 @@ export class ApiService {
   delete(table: string, id: string) {
     return this.http.delete(`${this.apiUrl}/${table}/${id}`);
   }
+
+  create(table: string, data: any) {
+    return this.http.post(`${this.apiUrl}/${table}`, data);
+  }
+
+  update(table: string, id: string, data: any) {
+    return this.http.put(`${this.apiUrl}/${table}/${id}`, data);
+  }
+
+  selectByParent(table: string, parentTable: string, parentId: string) {
+    return this.http.get(`${this.apiUrl}/${table}/${parentTable}/${parentId}`);
+  }
 }
